@@ -9,5 +9,4 @@ public class SamuraiJack2020Application {
 	public static void main(String[] args) {
 		SpringApplication.run(SamuraiJack2020Application.class, args);
 	}
-
 }

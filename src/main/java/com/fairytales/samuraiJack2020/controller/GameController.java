@@ -29,18 +29,17 @@ public class GameController {
 		
 		System.out.print(requestBody.toString());
 		// after check request, analyse it
-		SamuraiJack nieBot = new SamuraiJack(requestBody);
+		SamuraiJack samuraiJack = new SamuraiJack(requestBody);
 		char myPlayer = requestBody.getVariables().getPlayer();
 		System.out.print(requestBody);
 		if (requestBody.getStatus() == Status.start) {
 			//
 		}
-		Move myMove = //
+		Move myMove = samuraiJack.strategy();
 		if (myMove == null ) {	// just fake data so fake response
 			//
 		}
-		// if test - response with 
-		//Move myMove = new Move(Action.Fire,Direction.DOWN);
+
 		PlayerMove pMove = new PlayerMove(myMove);
 		return pMove;
 		//return new FairyGameResponse(pMove);

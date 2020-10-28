@@ -9,6 +9,7 @@ public class BoardElement {
 	
 	public static char[] playerTypes  = {
 			'A', 'B', 'C', 'D'};
+
 	
 	
 	public BoardElement(char theSign, Position thePosition) {

@@ -5,6 +5,9 @@ import com.fairytales.samuraiJack2020.controller.FairyResponse;
 
 public class PlayerMove extends FairyResponse {
 
+
+
+
 	private String move;
 	
 	public PlayerMove(Move theMove) {

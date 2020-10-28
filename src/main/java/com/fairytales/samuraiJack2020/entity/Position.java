@@ -14,6 +14,7 @@ public class Position {
 	public Position(int x, int y) {
 		this.x = x;
 		this.y = y;
+		this.parent = null;
 	}
 
 	public Position(int x, int y, Position parent) {
@@ -46,4 +47,12 @@ public class Position {
 		this.parent = parent;
 	}
 
+	@Override
+	public String toString() {
+		return "Position{" +
+				"x=" + x +
+				", y=" + y +
+				", parent=" + parent +
+				'}';
+	}
 }

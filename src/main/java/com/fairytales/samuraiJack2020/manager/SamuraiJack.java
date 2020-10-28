@@ -1,11 +1,10 @@
 package com.fairytales.samuraiJack2020.manager;
 
-import com.fairytales.samuraiJack2020.entity.GameRequest;
-import com.fairytales.samuraiJack2020.entity.Move;
-import com.fairytales.samuraiJack2020.entity.Player;
-import com.fairytales.samuraiJack2020.entity.Position;
+import com.fairytales.samuraiJack2020.entity.*;
+import jdk.internal.net.http.common.Pair;
 
-import java.util.Arrays;
+import java.util.List;
+
 
 public class SamuraiJack {
 
@@ -39,24 +38,57 @@ public class SamuraiJack {
         }
         return position;
     }
-
+    /*
     public Player.State detectStatusOfPlayers(){
 
-
-
-    }
+    }*/
 
     public Move strategy(){
+        Pair<Move,Position> nextMove;
+        Board board = new Board(gameRequest.getBoard());
+        MemoryOfGame memoryOfGame = MemoryOfGameHandler.get();
+        List<Pair<Move,Position>> solve;
+
+        if(memoryOfGame == null){
+            memoryOfGame = new MemoryOfGame();
+        }
+
+        if (memoryOfGame.getListOfMoves().isEmpty()){
+
+            board.setEntry(getPositionOfElement(gameRequest.getVariables().getPlayer()));
+            //decide what should i do ?
+            //simplest scenario -- go to flag I, then if (exist flag II ) and go to exit.
+            board.setGoal(BoardElement.elementTypes[1]);
+            solve = new BoardPathFinder().solve(board);
+
+        }else{
+            solve = memoryOfGame.getListOfMoves();
+        }
 
 
-        // 1. calculate amount of step btw. me and flags and exit.
-        // 2. calculate which player have the fastest way and if his next step will be predictible to hit -> shoot.
-        // 3. If My Next Step caused clear line of shoot and i'm the nearest, go to safe position twf
-        // 4. If I will have flags go to exit using safe position
-        //
+        nextMove =  solve.get(solve.size()-1);
+
+        solve.remove(solve.size()-1);
+        memoryOfGame.setListOfMoves(solve);
+        MemoryOfGameHandler.save(memoryOfGame);
+
+
+        return nextMove.first;
+
+    }
+
+/*
+    private boolean checkIfNextMoveIsPermited(Move nextMove,Board board){
 
 
     }
+    */
+
+/*
+    boolean checkIfNextMoveShouldBeTake(){
+
+    }
+    */
 
 
 
