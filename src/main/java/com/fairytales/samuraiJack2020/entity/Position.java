@@ -3,6 +3,7 @@ package com.fairytales.samuraiJack2020.entity;
 public class Position {
 	int x;
 	int y;
+	Position parent;
 	
 	public Position() {
 		
@@ -15,7 +16,11 @@ public class Position {
 		this.y = y;
 	}
 
-
+	public Position(int x, int y, Position parent) {
+		this.x = x;
+		this.y = y;
+		this.parent = parent;
+	}
 
 	public int getX() {
 		return x;
@@ -32,6 +37,13 @@ public class Position {
 	public void setY(int y) {
 		this.y = y;
 	}
-	
+
+	public Position getParent(){
+		return  parent;
+	}
+
+	public void setParent(Position parent){
+		this.parent = parent;
+	}
 
 }
