@@ -3,7 +3,7 @@ package com.fairytales.samuraiJack2020.manager;
 import com.fairytales.samuraiJack2020.entity.Board;
 import com.fairytales.samuraiJack2020.entity.Move;
 import com.fairytales.samuraiJack2020.entity.Position;
-import jdk.internal.net.http.common.Pair;
+import org.springframework.data.util.Pair;
 
 import java.util.*;
 
@@ -50,7 +50,7 @@ public class BoardPathFinder {
         while (iter != null) {
             //path.add(iter);
 
-            path.add(new Pair(computeMove(iter, prev),iter));
+            path.add(Pair.of(computeMove(iter, prev),iter));
             prev = iter;
             iter = iter.getParent();
 

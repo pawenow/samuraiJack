@@ -1,6 +1,6 @@
 package com.fairytales.samuraiJack2020.entity;
 
-import jdk.internal.net.http.common.Pair;
+import org.springframework.data.util.Pair;
 
 import java.util.List;
 import java.util.Map;

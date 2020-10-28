@@ -1,7 +1,7 @@
 package com.fairytales.samuraiJack2020.manager;
 
 import com.fairytales.samuraiJack2020.entity.*;
-import jdk.internal.net.http.common.Pair;
+import org.springframework.data.util.Pair;
 
 import java.util.List;
 
@@ -73,7 +73,7 @@ public class SamuraiJack {
         MemoryOfGameHandler.save(memoryOfGame);
 
 
-        return nextMove.first;
+        return nextMove.getFirst();
 
     }
 
