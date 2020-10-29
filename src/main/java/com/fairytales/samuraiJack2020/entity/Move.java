@@ -18,6 +18,9 @@ public class Move {
 		direction = theDirection;
 	}
 
+	public Move() {
+	}
+
 	/*
 	 * public char getCharMove() { return charMove; }
 	 * 

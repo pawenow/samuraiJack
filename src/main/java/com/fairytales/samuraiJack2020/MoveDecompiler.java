@@ -40,6 +40,24 @@ public class MoveDecompiler {
             default: return "";
         }
     }
+
+    public static Move transformDirection(int[] toTransform){
+
+        if(toTransform[0]!=0){
+            if(toTransform[0]>0){
+                return new Move(Move.Action.Take, Move.Direction.DOWN);
+            }else{
+                return new Move(Move.Action.Take, Move.Direction.UP);
+            }
+
+        }else{
+            if(toTransform[1]>0){
+                return new Move(Move.Action.Take, Move.Direction.RIGHT);
+            }else{
+                return new Move(Move.Action.Take, Move.Direction.LEFT);
+            }
+        }
+    }
 	
 	/*
 	 * Directive actions:

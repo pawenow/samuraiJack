@@ -1,8 +1,8 @@
 package com.fairytales.samuraiJack2020.entity;
 
 public class Position {
-	int x;
-	int y;
+	int w;
+	int k;
 	Position parent;
 	
 	public Position() {
@@ -11,32 +11,32 @@ public class Position {
 	
 	
 
-	public Position(int x, int y) {
-		this.x = x;
-		this.y = y;
+	public Position(int w, int k) {
+		this.w = w;
+		this.k = k;
 		this.parent = null;
 	}
 
-	public Position(int x, int y, Position parent) {
-		this.x = x;
-		this.y = y;
+	public Position(int w, int k, Position parent) {
+		this.w = w;
+		this.k = k;
 		this.parent = parent;
 	}
 
-	public int getX() {
-		return x;
+	public int getW() {
+		return w;
 	}
 
-	public void setX(int x) {
-		this.x = x;
+	public void setW(int w) {
+		this.w = w;
 	}
 
-	public int getY() {
-		return y;
+	public int getK() {
+		return k;
 	}
 
-	public void setY(int y) {
-		this.y = y;
+	public void setK(int k) {
+		this.k = k;
 	}
 
 	public Position getParent(){
@@ -50,8 +50,8 @@ public class Position {
 	@Override
 	public String toString() {
 		return "Position{" +
-				"x=" + x +
-				", y=" + y +
+				"w=" + w +
+				", k=" + k +
 				", parent=" + parent +
 				'}';
 	}

@@ -1,5 +1,6 @@
 package com.fairytales.samuraiJack2020.manager;
 
+import com.fairytales.samuraiJack2020.SamuraiUtils;
 import com.fairytales.samuraiJack2020.entity.Board;
 import com.fairytales.samuraiJack2020.entity.Move;
 import com.fairytales.samuraiJack2020.entity.Position;
@@ -9,7 +10,7 @@ import java.util.*;
 
 public class BoardPathFinder {
 
-    private static final int[][] DIRECTIONS = { { 0, 1 }, { 1, 0 }, { 0, -1 }, { -1, 0 } };
+    public static final int[][] DIRECTIONS = { { 0, 1 }, { 1, 0 }, { 0, -1 }, { -1, 0 } };
 
 
     public List<Pair<Move,Position>> solve(Board board) {
@@ -20,24 +21,24 @@ public class BoardPathFinder {
         while (!nextToVisit.isEmpty()) {
             Position cur = nextToVisit.remove();
 
-            if (!board.isValidLocation(cur.getX(), cur.getY()) || board.isExplored(cur.getX(), cur.getY())) {
+            if (!board.isValidLocation(cur.getW(), cur.getK()) || board.isExplored(cur.getW(), cur.getK())) {
                 continue;
             }
 
-            if (board.isWall(cur.getX(), cur.getY())) {
-                board.setVisited(cur.getX(), cur.getY(), true);
+            if (board.isWall(cur.getW(), cur.getK())) {
+                board.setVisited(cur.getW(), cur.getK(), true);
                 continue;
             }
 
-            if (board.isGoal(cur.getX(), cur.getY())) {
+            if (board.isGoal(cur.getW(), cur.getK())) {
                 return backtrackPath(cur);
             }
 
             for (int[] direction : DIRECTIONS) {
-                Position position = new Position(cur.getX() + direction[0], cur.getY() + direction[1], cur);
+                Position position = new Position(cur.getW() + direction[0], cur.getK() + direction[1], cur);
                 System.out.println(position.toString());
                 nextToVisit.add(position);
-                board.setVisited(cur.getX(), cur.getY(), true);
+                board.setVisited(cur.getW(), cur.getK(), true);
             }
         }
         return Collections.emptyList();
@@ -50,7 +51,7 @@ public class BoardPathFinder {
         while (iter != null) {
             //path.add(iter);
             if(prev!=null) {
-                path.add(Pair.of(computeMove(iter, prev), iter));
+                path.add(Pair.of(SamuraiUtils.computeMove(iter, prev), iter));
             }
             prev = iter;
             iter = iter.getParent();
@@ -60,31 +61,6 @@ public class BoardPathFinder {
         return path;
     }
 
-    private Move computeMove(Position parent, Position child ){
-        //compute how to be parent when it's child
-        Move move;
-        if(child == null ) return null;
-        if(parent.getX()!=child.getX()){
-            if(parent.getY() - child.getY()>0){
-                //UP
-                move = new Move(Move.Action.Walk, Move.Direction.UP);
-            }else{
-                //DOWN
-                move = new Move(Move.Action.Walk, Move.Direction.DOWN);
-            }
-        }else{
-            if(parent.getX() - child.getX()>0){
-                //UP
-                move = new Move(Move.Action.Walk, Move.Direction.LEFT);
-            }else{
-                //DOWN
-                move = new Move(Move.Action.Walk, Move.Direction.RIGHT);
-            }
 
-        }
-
-        return move;
-
-    }
 
 }

@@ -6,7 +6,8 @@ public class Player extends BoardElement {
 	private Move nextMove;
 	private int shortestPath;
 	private boolean isMyPlayer;
-	
+
+
 	public enum State {
 		normal, flag, flag2, freeze3, freeze2, freeze1, afterexit, updated;
 	}
@@ -14,10 +15,12 @@ public class Player extends BoardElement {
 
 	public Player(char sign, Position position, State theState, boolean isMyPlayer) {
 		super(sign, position);
-		state = theState;
-		isMyPlayer = isMyPlayer;
+		this.state = theState;
+		this.isMyPlayer = isMyPlayer;
 	}
-
+	public Player(char sign,Position position){
+		super(sign,position);
+	}
 
 	public State getState() {
 		return state;
@@ -55,7 +58,11 @@ public class Player extends BoardElement {
 
 	public void setIsMyPlayer(boolean isMyPlayer) {
 		this.isMyPlayer = isMyPlayer;
-	}	
+	}
+
+	public Boolean isFlagOnPlayer(){
+		return getState().equals(State.flag) || getState().equals(State.flag2);
+	}
 	
 	
 

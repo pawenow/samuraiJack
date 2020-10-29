@@ -1,5 +1,9 @@
 package com.fairytales.samuraiJack2020.entity;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class BoardElement {
 	private char sign;
 	private Position position;
@@ -9,6 +13,10 @@ public class BoardElement {
 	
 	public static char[] playerTypes  = {
 			'A', 'B', 'C', 'D'};
+
+	public static List<Character> elementTypesList = Arrays.asList('@', '$', '#');
+
+	public static List<Character> playersTypesList = Arrays.asList('A', 'B', 'C', 'D');
 
 	
 	
@@ -32,6 +40,8 @@ public class BoardElement {
 	public void setPosition(Position position) {
 		this.position = position;
 	}
+
+
 	
 	
 

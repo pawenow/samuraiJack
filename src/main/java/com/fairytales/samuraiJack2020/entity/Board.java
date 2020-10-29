@@ -21,8 +21,8 @@ public class Board {
 
             for (char aChar : chars) {
                 if(aChar == element){
-                    position.setX(k);
-                    position.setY(w);
+                    position.setW(w);
+                    position.setK(k);
                     return position;
                 }
                 k++;
