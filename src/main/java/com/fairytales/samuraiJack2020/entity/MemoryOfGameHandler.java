@@ -14,8 +14,8 @@ public class MemoryOfGameHandler {
 
     public static MemoryOfGame get(){
         try {
-            return objectMapper.readValue("resources/static/memoryOfGame.json",MemoryOfGame.class);
-        } catch (JsonProcessingException e) {
+            return objectMapper.readValue(new File ("target/memoryOfGame.json"),MemoryOfGame.class);
+        } catch (IOException e) {
             e.printStackTrace();
             LOGGER.fine("Can't get object");
 
@@ -25,7 +25,7 @@ public class MemoryOfGameHandler {
 
     public static void save(MemoryOfGame mem){
         try {
-            objectMapper.writeValue(new File("resources/static/memoryOfGame.json"),mem);
+            objectMapper.writeValue(new File("target/memoryOfGame.json"),mem);
         } catch (IOException e) {
             e.printStackTrace();
             LOGGER.fine("Can't save memory");

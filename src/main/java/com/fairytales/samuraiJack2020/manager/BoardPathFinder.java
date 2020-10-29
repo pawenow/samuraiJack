@@ -49,8 +49,9 @@ public class BoardPathFinder {
         Position iter = cur;
         while (iter != null) {
             //path.add(iter);
-
-            path.add(Pair.of(computeMove(iter, prev),iter));
+            if(prev!=null) {
+                path.add(Pair.of(computeMove(iter, prev), iter));
+            }
             prev = iter;
             iter = iter.getParent();
 

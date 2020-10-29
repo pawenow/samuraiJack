@@ -10,6 +10,7 @@ public class Board {
 
     public Board(char[][] boardMap) {
         this.boardMap = boardMap;
+        visited = new boolean[boardMap.length][boardMap[0].length];
     }
 
 

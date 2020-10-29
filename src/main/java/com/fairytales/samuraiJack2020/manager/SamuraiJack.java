@@ -53,7 +53,7 @@ public class SamuraiJack {
             memoryOfGame = new MemoryOfGame();
         }
 
-        if (memoryOfGame.getListOfMoves().isEmpty()){
+        if (memoryOfGame.getListOfMoves()==null || memoryOfGame.getListOfMoves().isEmpty() ){
 
             board.setEntry(getPositionOfElement(gameRequest.getVariables().getPlayer()));
             //decide what should i do ?
