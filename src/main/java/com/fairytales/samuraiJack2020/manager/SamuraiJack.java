@@ -28,50 +28,13 @@ public class SamuraiJack {
     }
 
 
-    public Position getPositionOfElement(char element) {
-        int w = 0, k = 0;
-        Position position = new Position();
-        for (char[] chars : gameRequest.getBoard()) {
-
-            for (char aChar : chars) {
-                if (aChar == element) {
-                    position.setW(w);
-                    position.setK(k);
-                    return position;
-                }
-                k++;
-            }
-            k = 0;
-            w++;
-        }
-        return position;
-    }
-
-    public List<Position> getPositionOfMultipleElement(char element) {
-        int w = 0, k = 0;
-
-        List<Position> position = new ArrayList<>();
-        for (char[] chars : gameRequest.getBoard()) {
-
-            for (char aChar : chars) {
-                if (aChar == element) {
-                    position.add(new Position(w, k));
-                }
-                k++;
-            }
-            k = 0;
-            w++;
-        }
-        return position;
-    }
-
     /*
     public Player.State detectStatusOfPlayers(){
 
     }*/
 
     public Move strategy() {
-        Move nextMove;
+
         List<Move> possibleMoves = new ArrayList<>();
 
 
@@ -79,17 +42,19 @@ public class SamuraiJack {
 
         Player myPlayer = GameController.players.stream().filter(p -> p.isMyPlayer()).findFirst().get();
 
-        //if flag around me, grab flag
 
-        possibleMoves.add(isFlagAroundMe(myPlayer, board));
+        possibleMoves.add(checkIfFlagIsAroundMeAndTakeIt(myPlayer, board));
+
 
         possibleMoves.add(checkIfPlayerIsAroundMeAndTakeFlagIfItHasOne(board,myPlayer));
 
-        possibleMoves.add(isSomeOneWillCrossMyLineToFlag(myPlayer.getPosition()));
 
-        // go to flag, search second one, and go to exit
+        possibleMoves.add(checkIfPlayerNextMoveGoAccrosMyLine(myPlayer.getPosition()));
+
+        // go to flag if exist :)
         possibleMoves.add(goTo(board, myPlayer, SamuraiConstants.FLAG_NUMBER));
 
+        // go to exit if have flag :)
         possibleMoves.add(goTo(board, myPlayer, SamuraiConstants.EXIT_NUMBER));
 
 
@@ -110,7 +75,7 @@ public class SamuraiJack {
         return nextMove;
     }
 
-    private Move isFlagAroundMe(Player player, Board board) {
+    private Move checkIfFlagIsAroundMeAndTakeIt(Player player, Board board) {
 
         Position positionOfPlayer = player.getPosition();
 
@@ -152,7 +117,7 @@ Boolean isSomeoneWantToFreezeMe(){ // so defend e.g. i have flag, and i should r
 
     } */
 
-    private Move isSomeOneWillCrossMyLineToFlag(Position playerPosition) { // freeze him
+    private Move checkIfPlayerNextMoveGoAccrosMyLine(Position playerPosition) { // freeze him
         List<Position> flagsPos = getPositionOfMultipleElement(BoardElement.elementTypes[1]);
         BiFunction<Integer, Integer, Boolean> isMatch = (x1, x2) -> Stream.of(x1 + 1, x1 - 1).anyMatch(x2::equals);
 
@@ -221,6 +186,43 @@ Boolean isSomeoneWantToFreezeMe(){ // so defend e.g. i have flag, and i should r
             }
         }
         return null;
+    }
+
+    public Position getPositionOfElement(char element) {
+        int w = 0, k = 0;
+        Position position = new Position();
+        for (char[] chars : gameRequest.getBoard()) {
+
+            for (char aChar : chars) {
+                if (aChar == element) {
+                    position.setW(w);
+                    position.setK(k);
+                    return position;
+                }
+                k++;
+            }
+            k = 0;
+            w++;
+        }
+        return position;
+    }
+
+    public List<Position> getPositionOfMultipleElement(char element) {
+        int w = 0, k = 0;
+
+        List<Position> position = new ArrayList<>();
+        for (char[] chars : gameRequest.getBoard()) {
+
+            for (char aChar : chars) {
+                if (aChar == element) {
+                    position.add(new Position(w, k));
+                }
+                k++;
+            }
+            k = 0;
+            w++;
+        }
+        return position;
     }
 
 }
