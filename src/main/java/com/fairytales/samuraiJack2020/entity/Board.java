@@ -5,6 +5,7 @@ public class Board {
     private boolean visited[][];
 
     private char goal;
+    private Position goal_coor;
     private Position entry; // my Position
 
 
@@ -78,7 +79,8 @@ public class Board {
     }
 
     public boolean isGoal(int x, int y) {
-        if(boardMap[x][y]==getGoal()) return Boolean.TRUE;
+        if(boardMap[x][y] == getGoal()) return Boolean.TRUE;
+        if(getGoalCoordinate()!= null && x == getGoalCoordinate().getK() && y == getGoalCoordinate().getW()) return Boolean.TRUE;
         return false;
     }
 
@@ -88,6 +90,15 @@ public class Board {
 
     public void setGoal(char goal) {
         this.goal = goal;
+    }
+
+    public void setGoalCoordinate(Position goalPosition){
+        this.goal_coor = goalPosition;
+
+    }
+
+    public Position getGoalCoordinate(){
+        return goal_coor;
     }
 
     public Position getEntry() {

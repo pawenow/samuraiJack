@@ -8,6 +8,8 @@ public class Player extends BoardElement {
 	private boolean isMyPlayer;
 
 
+
+
 	public enum State {
 		normal, flag, flag2, freeze3, freeze2, freeze1, afterexit, updated;
 	}
@@ -64,6 +66,37 @@ public class Player extends BoardElement {
 		return getState().equals(State.flag) || getState().equals(State.flag2);
 	}
 	
-	
+	public void increaseAmountOfFlag(){
+
+		if(getState()==State.flag){
+			setState(State.flag2);
+		}else if(getState()==State.normal){
+			setState(State.flag);
+		}
+	}
+
+	public void decreaseAmountOfFlag(){
+		if(getState()==State.flag){
+			setState(State.normal);
+		}else if(getState()==State.flag2){
+			setState(State.flag);
+		}
+
+	}
+	public void freezePlayer() {
+		if(getState()!= State.freeze1 && getState()!= State.freeze2 && getState()!= State.freeze3 ){
+			setState(State.freeze3);
+		}
+	}
+
+	public void defreezePlayer(){
+		if(getState()==State.freeze1){
+			setState(State.normal);
+		} else if(getState()==State.freeze2){
+			setState(State.freeze1);
+		} else if (getState()==State.freeze3){
+			setState(State.freeze2);
+		}
+	}
 
 }

@@ -57,7 +57,8 @@ public class SamuraiJack {
         // go to exit if have flag :)
         possibleMoves.add(goTo(board, myPlayer, SamuraiConstants.EXIT_NUMBER));
 
-
+        //hount player with flag and take it from it
+        possibleMoves.add(huntingMode(myPlayer,board));
 
         return possibleMoves.stream().filter(Objects::nonNull).findFirst().orElse(new Move(Move.Action.Nothing, Move.Direction.NoDirection));
 
@@ -70,8 +71,8 @@ public class SamuraiJack {
         board.setGoal(BoardElement.elementTypes[typeOfElement]);
         board.setEntry(myPlayer.getPosition());
         solve = new BoardPathFinder().solve(board);
-
-        nextMove = solve.get(ThreadLocalRandom.current().nextInt(0, solve.size() - 1)).getFirst();
+        if(!solve.isEmpty()) nextMove = solve.get(ThreadLocalRandom.current().nextInt(0, solve.size() - 1)).getFirst();
+        else nextMove = null;
         return nextMove;
     }
 
@@ -119,6 +120,7 @@ Boolean isSomeoneWantToFreezeMe(){ // so defend e.g. i have flag, and i should r
 
     private Move checkIfPlayerNextMoveGoAccrosMyLine(Position playerPosition) { // freeze him
         List<Position> flagsPos = getPositionOfMultipleElement(BoardElement.elementTypes[1]);
+        List<Position> exitPos = getPositionOfMultipleElement(BoardElement.elementTypes[0]);
         BiFunction<Integer, Integer, Boolean> isMatch = (x1, x2) -> Stream.of(x1 + 1, x1 - 1).anyMatch(x2::equals);
 
         List<Player> playersAcross = GameController.players.stream().filter(p -> p.getPosition() != null).filter(p -> {
@@ -129,8 +131,12 @@ Boolean isSomeoneWantToFreezeMe(){ // so defend e.g. i have flag, and i should r
 
         List<Player> W_collection = playersAcross.stream().filter(p -> flagsPos.stream().map(q -> q.getW()).collect(Collectors.toList()).contains(p.getPosition().getW())).collect(Collectors.toList());
 
+        List<Player> K_collection_Exit = playersAcross.stream().filter(p -> exitPos.stream().map(q -> q.getK()).collect(Collectors.toList()).contains(p.getPosition().getK())).collect(Collectors.toList());
 
-        if (!K_collection.isEmpty()) {
+        List<Player> W_collection_Exit = playersAcross.stream().filter(p -> exitPos.stream().map(q -> q.getW()).collect(Collectors.toList()).contains(p.getPosition().getW())).collect(Collectors.toList());
+
+
+        if (!K_collection.isEmpty() || !K_collection_Exit.isEmpty()   ) {
             if (K_collection.get(0).getPosition().getK() > playerPosition.getK()) {
                 return new Move(Move.Action.Fire, Move.Direction.RIGHT);
             } else {
@@ -138,7 +144,7 @@ Boolean isSomeoneWantToFreezeMe(){ // so defend e.g. i have flag, and i should r
             }
 
 
-        } else if (!W_collection.isEmpty()) {
+        } else if (!W_collection.isEmpty() || W_collection_Exit.isEmpty() ) {
             if (W_collection.get(0).getPosition().getW() > playerPosition.getW()) {
                 return new Move(Move.Action.Fire, Move.Direction.DOWN);
             } else {
@@ -161,6 +167,28 @@ Boolean isSomeoneWantToFreezeMe(){ // so defend e.g. i have flag, and i should r
         return getPositionOfElement(BoardElement.elementTypes[1]) != null;
     }
 
+
+    Move huntingMode(Player myPlayer,Board board ){
+        Optional<Player> flagOnPlayer = GameController.players.stream().filter(p -> p.isFlagOnPlayer() && !p.isMyPlayer()).findFirst();
+        if(flagOnPlayer.isPresent()) {
+
+            Position playerWithFlagPosition = flagOnPlayer.get().getPosition();
+            Optional<int[]> goalCoordination = Arrays.asList(BoardPathFinder.DIRECTIONS).stream().filter(h -> {
+                return (h[0] + playerWithFlagPosition.getW() > 0) && (h[1] + playerWithFlagPosition.getK() > 0);
+            }).filter(h->board.getBoardMap()[h[0] + playerWithFlagPosition.getW()][h[1] + playerWithFlagPosition.getK()]!=BoardElement.elementTypes[SamuraiConstants.EXIT_NUMBER]).findFirst();
+
+            if (goalCoordination.isPresent()) {
+                board.setGoalCoordinate( new Position(goalCoordination.get()[0],goalCoordination.get()[1]));
+                board.setEntry(myPlayer.getPosition());
+                List<Pair<Move, Position>> solve = new BoardPathFinder().solve(board);
+
+                if(!solve.isEmpty()) return solve.get(ThreadLocalRandom.current().nextInt(0, solve.size() - 1)).getFirst();
+
+            }
+        }
+        return null;
+
+    }
     /*
     randomMove(){
 
@@ -224,5 +252,6 @@ Boolean isSomeoneWantToFreezeMe(){ // so defend e.g. i have flag, and i should r
         }
         return position;
     }
+
 
 }
