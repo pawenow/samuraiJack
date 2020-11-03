@@ -48,7 +48,7 @@ public class GameController {
 		}
 
 		//if(requestBody.getStatus() == Status.progress){
-			GameManager.updateStatusOfPlayers(requestBody);
+			GameManager.updatePlayerAfterLastTurn(requestBody);
 		//}
 
 		if(requestBody.getStatus()==Status.end){

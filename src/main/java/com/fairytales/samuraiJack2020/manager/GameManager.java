@@ -1,5 +1,6 @@
 package com.fairytales.samuraiJack2020.manager;
 
+import com.fairytales.samuraiJack2020.SamuraiConstants;
 import com.fairytales.samuraiJack2020.SamuraiUtils;
 import com.fairytales.samuraiJack2020.controller.GameController;
 import com.fairytales.samuraiJack2020.entity.BoardElement;
@@ -42,17 +43,17 @@ public class GameManager {
 
     }
 
-    private static void updatePlayerAfterLastTurn(GameRequest gameRequest){
-
+    public static void updatePlayerAfterLastTurn(GameRequest gameRequest){
+        updateFreezePlayer();
         Map<String, String> collect = Arrays.stream(gameRequest.getLastTurn()).collect(Collectors.toMap(l -> String.valueOf(l.charAt(0)), l -> l.substring(1, 2)));
         String move = null;
         //dir[0] = row, dir[1] = column
-        int[] dir =null;
+        int[] dir = new int[2];
         //Take
         for (Player player : GameController.players) {
-             move = collect.get(player.getSign());
+            move = collect.get(String.valueOf(player.getSign()));
             if(move !=null){
-                move.toUpperCase();
+                move = move.toUpperCase();
                 if(move.charAt(0)=='T'){
 
                     switch(move.charAt(1)){
@@ -83,7 +84,10 @@ public class GameManager {
                             p.decreaseAmountOfFlag();
                             player.increaseAmountOfFlag();
                         });
+                    }else if(BoardElement.elementTypes[SamuraiConstants.FLAG_NUMBER]==c){
+                        player.increaseAmountOfFlag();
                     }
+
 
                 }
             }
@@ -92,12 +96,12 @@ public class GameManager {
         }
         //Walk
         GameController.players.stream().forEach(player -> player.setPosition(SamuraiUtils.getPositionOfElement(player.getSign(),gameRequest.getBoard())));
-        //Fire
 
+        //Fire
         for (Player player : GameController.players){
-            move = collect.get(player.getSign());
+            move = collect.get(String.valueOf(player.getSign()));
             if(move !=null){
-                move.toUpperCase();
+                move = move.toUpperCase();
                 if(move.charAt(0)=='F'){
 
                     switch(move.charAt(1)){
@@ -118,22 +122,37 @@ public class GameManager {
                         }
                         case 'R':{
                             dir[0] = 0;
-                            dir[1] = -1;
+                            dir[1] = 1;
                             break;
                         }
                     }
-
-                    if(BoardElement.playersTypesList.contains(c)) {
-                        GameController.players.stream().filter(p -> p.getSign() == c).peek(p -> {
-                            p.freezePlayer();
-                        });
+                    for (Player possibleFreeze : GameController.players) {
+                        if(dir[0]!=0){
+                            if(player.getPosition().getK() == possibleFreeze.getPosition().getK()){
+                                if((player.getPosition().getW()<possibleFreeze.getPosition().getW() && dir[0]>0) || (player.getPosition().getW()>possibleFreeze.getPosition().getW() && dir[0]<0)){
+                                    possibleFreeze.freezePlayer();
+                                }
+                            }
+                        }
+                        if(dir[1]!=0){
+                            if(player.getPosition().getW() == possibleFreeze.getPosition().getW()){
+                                if((player.getPosition().getK()<possibleFreeze.getPosition().getK() && dir[1]>0) || (player.getPosition().getK()>possibleFreeze.getPosition().getK() && dir[1]<0)){
+                                    possibleFreeze.freezePlayer();
+                                }
+                            }
+                        }
                     }
+
 
                 }
             }
             dir=null;
         }
 
+    }
+
+    private static void updateFreezePlayer(){
+        GameController.players.stream().peek(p->p.defreezePlayer());
     }
 
 
