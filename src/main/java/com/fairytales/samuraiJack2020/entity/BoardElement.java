@@ -12,7 +12,7 @@ public class BoardElement {
 		'@', '$', '#'};
 	
 	public static char[] playerTypes  = {
-			'A', 'B', 'C', 'D'};
+			'A', 'B', 'C', 'D','E','F'};
 
 	public static List<Character> elementTypesList = Arrays.asList('@', '$', '#');
 

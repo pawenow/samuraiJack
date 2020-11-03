@@ -1,0 +1,19 @@
+{
+  "game": {
+    "title": "string",
+    "stage": "qualify",
+    "round": 0,
+    "turn": 0
+  },
+  "status": "start",
+  "board": [["@","#","#","#"], [" "," "," "," "], [" "," "," "," "], ["D","A"," ","C"], ["#"," ","#","#"], [" ","E"," "," "]],
+  "variables": {
+    "player": "A",
+    "timeout": 0,
+    "turns": 0,
+    "order": "",
+    "shield": 0
+  },
+  "lastTurn": [
+  ]
+}

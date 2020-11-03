@@ -8,7 +8,6 @@ import com.fairytales.samuraiJack2020.entity.GameRequest;
 import com.fairytales.samuraiJack2020.entity.Player;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -30,75 +29,47 @@ public class GameManager {
     }
 
     public static  void initializePlayers(GameRequest gameRequest){
-        /*
-        Arrays.asList(BoardElement.playerTypes).stream().filter(a-> {
-            return GameController.players.add(new Player(a[0], SamuraiUtils.getPositionOfElement(a[0],gameRequest.getBoard()), Player.State.normal, gameRequest.getVariables().getPlayer() == a[0]));
-        });
-        */
+
         if(GameController.players.isEmpty()){
             for (char chars : BoardElement.playerTypes) {
-                GameController.players.add(new Player(chars, SamuraiUtils.getPositionOfElement(chars,gameRequest.getBoard()), Player.State.normal, gameRequest.getVariables().getPlayer() == chars));
+                if(SamuraiUtils.getPositionOfElement(chars,gameRequest.getBoard())!=null){
+                    GameController.players.add(new Player(chars, SamuraiUtils.getPositionOfElement(chars,gameRequest.getBoard()), Player.State.normal, gameRequest.getVariables().getPlayer() == chars));
+                }
             }
-        }
 
+        }
     }
 
     public static void updatePlayerAfterLastTurn(GameRequest gameRequest){
-        updateFreezePlayer();
+
+
         Map<String, String> collect = Arrays.stream(gameRequest.getLastTurn()).collect(Collectors.toMap(l -> String.valueOf(l.charAt(0)), l -> l.substring(1, 2)));
-        String move = null;
         //dir[0] = row, dir[1] = column
         int[] dir = new int[2];
+
+        // Freeze update
+        updateFreezePlayer();
+
         //Take
-        for (Player player : GameController.players) {
-            move = collect.get(String.valueOf(player.getSign()));
-            if(move !=null){
-                move = move.toUpperCase();
-                if(move.charAt(0)=='T'){
+        executeTakeAction(collect);
 
-                    switch(move.charAt(1)){
-                        case 'U':{
-                            dir[0] = -1;
-                            dir[1] = 0;
-                            break;
-                        }
-                        case 'D':{
-                            dir[0] = 1;
-                            dir[1] = 0;
-                            break;
-                        }
-                        case 'L':{
-                            dir[0] = 0;
-                            dir[1] = -1;
-                            break;
-                        }
-                        case 'R':{
-                            dir[0] = 0;
-                            dir[1] = -1;
-                            break;
-                        }
-                    }
-                    char c = GameController.previousGameRequest.getBoard()[player.getPosition().getW() + dir[0]][player.getPosition().getK() + dir[1]];
-                    if(BoardElement.playersTypesList.contains(c)) {
-                        GameController.players.stream().filter(p -> p.getSign() == c).peek(p -> {
-                            p.decreaseAmountOfFlag();
-                            player.increaseAmountOfFlag();
-                        });
-                    }else if(BoardElement.elementTypes[SamuraiConstants.FLAG_NUMBER]==c){
-                        player.increaseAmountOfFlag();
-                    }
-
-
-                }
-            }
-            dir=null;
-
-        }
         //Walk
-        GameController.players.stream().forEach(player -> player.setPosition(SamuraiUtils.getPositionOfElement(player.getSign(),gameRequest.getBoard())));
+        executeWalk(gameRequest);
 
         //Fire
+        executeFireAction(collect);
+
+    }
+
+    private static void executeWalk(GameRequest gameRequest) {
+        GameController.players.stream().forEach(player -> player.setPosition(SamuraiUtils.getPositionOfElement(player.getSign(),gameRequest.getBoard())));
+    }
+
+    public static void executeFireAction(Map<String, String> collect) {
+        int[] dir = new int[2];
+        String move;
         for (Player player : GameController.players){
+            if(player.isFreeze()) continue;
             move = collect.get(String.valueOf(player.getSign()));
             if(move !=null){
                 move = move.toUpperCase();
@@ -146,9 +117,56 @@ public class GameManager {
 
                 }
             }
-            dir=null;
         }
+    }
 
+    public static void executeTakeAction(Map<String, String> collect) {
+        int[] dir = new int[2];
+        String move;
+        for (Player player : GameController.players) {
+            move = collect.get(String.valueOf(player.getSign()));
+            if(move !=null){
+                move = move.toUpperCase();
+                if(move.charAt(0)=='T'){
+
+                    switch(move.charAt(1)){
+                        case 'U':{
+                            dir[0] = -1;
+                            dir[1] = 0;
+                            break;
+                        }
+                        case 'D':{
+                            dir[0] = 1;
+                            dir[1] = 0;
+                            break;
+                        }
+                        case 'L':{
+                            dir[0] = 0;
+                            dir[1] = -1;
+                            break;
+                        }
+                        case 'R':{
+                            dir[0] = 0;
+                            dir[1] = -1;
+                            break;
+                        }
+                    }
+                    char c = GameController.previousGameRequest.getBoard()[player.getPosition().getW() + dir[0]][player.getPosition().getK() + dir[1]];
+                    if(BoardElement.playersTypesList.contains(c)) {
+                        GameController.players.stream().filter(p -> p.getSign() == c).peek(p -> {
+                            p.decreaseAmountOfFlag();
+                            player.increaseAmountOfFlag();
+                        });
+                    }else if(BoardElement.elementTypes[SamuraiConstants.FLAG_NUMBER]==c){
+                        player.increaseAmountOfFlag();
+                    }
+
+
+                }
+            }
+            dir=null;
+
+        }
     }
 
     private static void updateFreezePlayer(){

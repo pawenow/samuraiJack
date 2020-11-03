@@ -1,5 +1,9 @@
 package com.fairytales.samuraiJack2020.entity;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
+import java.util.Arrays;
+
 public class Player extends BoardElement {
 
 	private State state;
@@ -97,6 +101,13 @@ public class Player extends BoardElement {
 		} else if (getState()==State.freeze3){
 			setState(State.freeze2);
 		}
+	}
+
+	public Boolean isFreeze(){
+		if(Arrays.asList(new State[]{State.freeze3, State.freeze2, State.freeze1}).contains(getState())){
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
 	}
 
 }
