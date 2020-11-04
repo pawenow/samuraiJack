@@ -1,7 +1,5 @@
 package com.fairytales.samuraiJack2020.entity;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 import java.util.Arrays;
 
 public class Player extends BoardElement {
@@ -10,7 +8,8 @@ public class Player extends BoardElement {
 	private Move nextMove;
 	private int shortestPath;
 	private boolean isMyPlayer;
-
+	private boolean blockedFlag1;
+	private boolean blockedFlag2;
 
 
 
@@ -74,8 +73,10 @@ public class Player extends BoardElement {
 
 		if(getState()==State.flag){
 			setState(State.flag2);
+			blockedFlag1 = false;
 		}else if(getState()==State.normal){
 			setState(State.flag);
+			blockedFlag2 = false;
 		}
 	}
 
@@ -108,6 +109,17 @@ public class Player extends BoardElement {
 			return Boolean.TRUE;
 		}
 		return Boolean.FALSE;
+	}
+	public void  acceptFlags(){
+		if(getState()==State.flag){
+			blockedFlag1 = true;
+		}
+		if(getState()==State.flag2){
+			blockedFlag1=blockedFlag2=true;
+		}
+	}
+	public Boolean isFlagsAccepted(){
+		return blockedFlag1 || blockedFlag2;
 	}
 
 }

@@ -17,7 +17,7 @@ public class BoardPathFinder {
         LinkedList<Position> nextToVisit = new LinkedList<>();
         Position start = board.getEntry();
         nextToVisit.add(start);
-
+        board.resetVisited();
         while (!nextToVisit.isEmpty()) {
             Position cur = nextToVisit.remove();
 

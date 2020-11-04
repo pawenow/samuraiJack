@@ -16,7 +16,7 @@ public class BoardElement {
 
 	public static List<Character> elementTypesList = Arrays.asList('@', '$', '#');
 
-	public static List<Character> playersTypesList = Arrays.asList('A', 'B', 'C', 'D');
+	public static List<Character> playersTypesList = Arrays.asList('A', 'B', 'C', 'D','E','F','G');
 
 	
 	

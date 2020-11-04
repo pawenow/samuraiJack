@@ -1,7 +1,7 @@
 package com.fairytales.samuraiJack2020;
 
-import com.fairytales.samuraiJack2020.entity.Move;
-import com.fairytales.samuraiJack2020.entity.Position;
+import com.fairytales.samuraiJack2020.controller.GameController;
+import com.fairytales.samuraiJack2020.entity.*;
 
 public class SamuraiUtils {
 
@@ -76,6 +76,20 @@ public class SamuraiUtils {
         }
 
         return move;
+    }
+
+    public static Player getPlayerByChar(char sign){
+        return GameController.players.stream().filter(p->p.getSign()==sign).findFirst().get();
+    }
+
+    public static boolean isInBoundaries(int[] dir, int n, Player player) {
+        return player.getPosition().getK() + n * dir[1] >= 0 && GameController.previousGameRequest.getBoard()[1].length >= player.getPosition().getK() + n * dir[1]
+                && player.getPosition().getW() + n * dir[0] >= 0 && GameController.previousGameRequest.getBoard().length > player.getPosition().getW() + n * dir[0];
+    }
+
+    public static boolean isInBoundaries(int[] dir, int n, Position position, Board board) {
+        return position.getK() + n * dir[1] >= 0 && board.getBoardMap()[1].length >= position.getK() + n * dir[1]
+                && position.getW() + n * dir[0] >= 0 && board.getBoardMap().length > position.getW() + n * dir[0];
     }
 
 

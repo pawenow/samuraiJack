@@ -7,11 +7,14 @@ import com.fairytales.samuraiJack2020.controller.GameController;
 import com.fairytales.samuraiJack2020.entity.*;
 import org.springframework.data.util.Pair;
 
+import java.lang.annotation.ElementType;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.fairytales.samuraiJack2020.SamuraiUtils.isInBoundaries;
 
 
 public class SamuraiJack {
@@ -55,8 +58,9 @@ public class SamuraiJack {
         possibleMoves.add(goTo(board, myPlayer, SamuraiConstants.FLAG_NUMBER));
 
         // go to exit if have flag :)
-        possibleMoves.add(goTo(board, myPlayer, SamuraiConstants.EXIT_NUMBER));
-
+        if(myPlayer.isFlagOnPlayer() || iamalone(board,myPlayer) ) {
+            possibleMoves.add(goTo(board, myPlayer, SamuraiConstants.EXIT_NUMBER));
+        }
         //hount player with flag and take it from it
         possibleMoves.add(huntingMode(myPlayer,board));
 
@@ -64,14 +68,18 @@ public class SamuraiJack {
 
     }
 
-
     private Move goTo(Board board, Player myPlayer, Integer typeOfElement) {
         List<Pair<Move, Position>> solve;
         Move nextMove;
         board.setGoal(BoardElement.elementTypes[typeOfElement]);
         board.setEntry(myPlayer.getPosition());
         solve = new BoardPathFinder().solve(board);
-        if(!solve.isEmpty()) nextMove = solve.get(ThreadLocalRandom.current().nextInt(0, solve.size() - 1)).getFirst();
+        if(!solve.isEmpty()) {
+            if(solve.size()>1)
+            nextMove = solve.get(ThreadLocalRandom.current().nextInt(0, solve.size())).getFirst();
+            else
+                nextMove = solve.get(0).getFirst();
+        }
         else nextMove = null;
         return nextMove;
     }
@@ -81,7 +89,7 @@ public class SamuraiJack {
         Position positionOfPlayer = player.getPosition();
 
         Optional<int[]> posibleFlag = Arrays.asList(BoardPathFinder.DIRECTIONS).stream().filter(h -> {
-            return (h[0] + positionOfPlayer.getW() > 0) && (h[1] + positionOfPlayer.getK() > 0);
+            return SamuraiUtils.isInBoundaries(h,1,player.getPosition(),board);
         }).filter(a -> (board.getBoardMap()[a[0] + positionOfPlayer.getW()][a[1] + positionOfPlayer.getK()] == BoardElement.elementTypes[1])).findFirst();
 
         if (posibleFlag.isPresent()) {
@@ -96,7 +104,7 @@ public class SamuraiJack {
         List<Player> listOfPlayers = new ArrayList<>();
 
         List<int[]> playersAroundMe = Arrays.asList(BoardPathFinder.DIRECTIONS).stream().filter(h -> {
-            return (h[0] + myPosition.getW() > 0) && (h[1] + myPosition.getK() > 0);
+            return SamuraiUtils.isInBoundaries(h,1,myPosition,board);
         }).filter(a -> (BoardElement.playersTypesList).contains(board.getBoardMap()[a[0] + myPosition.getW()][a[1] + myPosition.getK()])).collect(Collectors.toList());
 
         List<Character> collect = playersAroundMe.stream().map(a -> board.getBoardMap()[a[0] + myPosition.getW()][a[1] + myPosition.getK()]).collect(Collectors.toList());
@@ -136,21 +144,33 @@ Boolean isSomeoneWantToFreezeMe(){ // so defend e.g. i have flag, and i should r
         List<Player> W_collection_Exit = playersAcross.stream().filter(p -> exitPos.stream().map(q -> q.getW()).collect(Collectors.toList()).contains(p.getPosition().getW())).collect(Collectors.toList());
 
 
-        if (!K_collection.isEmpty() || !K_collection_Exit.isEmpty()   ) {
-            if (K_collection.get(0).getPosition().getK() > playerPosition.getK()) {
-                return new Move(Move.Action.Fire, Move.Direction.RIGHT);
-            } else {
-                return new Move(Move.Action.Fire, Move.Direction.LEFT);
+        if (!K_collection.isEmpty() || !K_collection_Exit.isEmpty()) {
+            if(!K_collection.isEmpty()){
+                if (K_collection.get(0).getPosition().getK() > playerPosition.getK()) {
+                    return new Move(Move.Action.Fire, Move.Direction.RIGHT);
+                } else {
+                    return new Move(Move.Action.Fire, Move.Direction.LEFT);
+                }}else{
+                    if (K_collection_Exit.get(0).getPosition().getK() > playerPosition.getK()) {
+                        return new Move(Move.Action.Fire, Move.Direction.RIGHT);
+                    } else {
+                        return new Move(Move.Action.Fire, Move.Direction.LEFT);
+                }
             }
-
-
-        } else if (!W_collection.isEmpty() || W_collection_Exit.isEmpty() ) {
-            if (W_collection.get(0).getPosition().getW() > playerPosition.getW()) {
+        } else if (!W_collection.isEmpty() || !W_collection_Exit.isEmpty() ) {
+            if(!W_collection.isEmpty()){
+                if (W_collection.get(0).getPosition().getW() > playerPosition.getW()) {
+                    return new Move(Move.Action.Fire, Move.Direction.DOWN);
+                } else {
+                    return new Move(Move.Action.Fire, Move.Direction.UP);
+                }
+        }else{
+            if (W_collection_Exit.get(0).getPosition().getW() > playerPosition.getW()) {
                 return new Move(Move.Action.Fire, Move.Direction.DOWN);
             } else {
                 return new Move(Move.Action.Fire, Move.Direction.UP);
             }
-        }
+        }}
 
         return null;
     }
@@ -174,7 +194,7 @@ Boolean isSomeoneWantToFreezeMe(){ // so defend e.g. i have flag, and i should r
 
             Position playerWithFlagPosition = flagOnPlayer.get().getPosition();
             Optional<int[]> goalCoordination = Arrays.asList(BoardPathFinder.DIRECTIONS).stream().filter(h -> {
-                return (h[0] + playerWithFlagPosition.getW() > 0) && (h[1] + playerWithFlagPosition.getK() > 0);
+                return isInBoundaries(h,1,flagOnPlayer.get().getPosition(),board);
             }).filter(h->board.getBoardMap()[h[0] + playerWithFlagPosition.getW()][h[1] + playerWithFlagPosition.getK()]!=BoardElement.elementTypes[SamuraiConstants.EXIT_NUMBER]).findFirst();
 
             if (goalCoordination.isPresent()) {
@@ -253,5 +273,15 @@ Boolean isSomeoneWantToFreezeMe(){ // so defend e.g. i have flag, and i should r
         return position;
     }
 
+    private boolean iamalone(Board board, Player myPlayer) {
+        for (char[] chars : board.getBoardMap()) {
+            for (char aChar : chars) {
+                if((BoardElement.playersTypesList.contains(aChar) || aChar==BoardElement.elementTypes[SamuraiConstants.FLAG_NUMBER])&&aChar!=myPlayer.getSign()){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
 }

@@ -1,5 +1,9 @@
 package com.fairytales.samuraiJack2020.entity;
 
+import com.fairytales.samuraiJack2020.SamuraiConstants;
+
+import java.util.Arrays;
+
 public class Board {
     private char[][] boardMap;
     private boolean visited[][];
@@ -61,7 +65,7 @@ public class Board {
     }
 
     public boolean isWall(int x, int y) {
-        if(boardMap[x][y]==BoardElement.elementTypes[2]) return Boolean.TRUE;
+        if(boardMap[x][y]==BoardElement.elementTypes[SamuraiConstants.WALL_NUMBER]) return Boolean.TRUE;
         return false;
     }
 
@@ -109,4 +113,7 @@ public class Board {
         this.entry = entry;
     }
 
+    public void resetVisited() {
+        visited = new boolean[boardMap.length][boardMap[0].length];
+    }
 }

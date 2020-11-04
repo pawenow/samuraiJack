@@ -7,9 +7,13 @@ import com.fairytales.samuraiJack2020.entity.BoardElement;
 import com.fairytales.samuraiJack2020.entity.GameRequest;
 import com.fairytales.samuraiJack2020.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.fairytales.samuraiJack2020.SamuraiUtils.isInBoundaries;
 
 public class GameManager {
     public static void clearGameHistory() {
@@ -20,14 +24,6 @@ public class GameManager {
         GameController.previousGameRequest = request;
     }
 
-    public static void updateStatusOfPlayers(GameRequest gameRequest) {
-
-
-
-
-
-    }
-
     public static  void initializePlayers(GameRequest gameRequest){
 
         if(GameController.players.isEmpty()){
@@ -36,28 +32,31 @@ public class GameManager {
                     GameController.players.add(new Player(chars, SamuraiUtils.getPositionOfElement(chars,gameRequest.getBoard()), Player.State.normal, gameRequest.getVariables().getPlayer() == chars));
                 }
             }
-
         }
+        GameController.players.forEach(p->p.acceptFlags());
     }
 
     public static void updatePlayerAfterLastTurn(GameRequest gameRequest){
 
+        if(gameRequest.getLastTurn().length>0) {
+            Map<String, String> collect = Arrays.stream(gameRequest.getLastTurn()).collect(Collectors.toMap(l -> String.valueOf(l.charAt(0)), l -> l.substring(1, 3)));
+            //dir[0] = row, dir[1] = column
+            int[] dir = new int[2];
 
-        Map<String, String> collect = Arrays.stream(gameRequest.getLastTurn()).collect(Collectors.toMap(l -> String.valueOf(l.charAt(0)), l -> l.substring(1, 2)));
-        //dir[0] = row, dir[1] = column
-        int[] dir = new int[2];
+            // Freeze update
+            updateFreezePlayer();
 
-        // Freeze update
-        updateFreezePlayer();
+            //Take
+            executeTakeAction(collect,gameRequest);
 
-        //Take
-        executeTakeAction(collect);
+            //Walk
+            executeWalk(gameRequest);
 
-        //Walk
-        executeWalk(gameRequest);
-
-        //Fire
-        executeFireAction(collect);
+            //Fire
+            executeFireAction(collect,gameRequest);
+        }else{
+            executeWalk(gameRequest);
+        }
 
     }
 
@@ -65,11 +64,13 @@ public class GameManager {
         GameController.players.stream().forEach(player -> player.setPosition(SamuraiUtils.getPositionOfElement(player.getSign(),gameRequest.getBoard())));
     }
 
-    public static void executeFireAction(Map<String, String> collect) {
+    public static void executeFireAction(Map<String, String> collect,GameRequest gameRequest) {
         int[] dir = new int[2];
+        int n = 1;
+        Boolean whileCondition = true;
+        List<Player> freezePlayers = new ArrayList<>();
         String move;
         for (Player player : GameController.players){
-            if(player.isFreeze()) continue;
             move = collect.get(String.valueOf(player.getSign()));
             if(move !=null){
                 move = move.toUpperCase();
@@ -97,31 +98,31 @@ public class GameManager {
                             break;
                         }
                     }
-                    for (Player possibleFreeze : GameController.players) {
-                        if(dir[0]!=0){
-                            if(player.getPosition().getK() == possibleFreeze.getPosition().getK()){
-                                if((player.getPosition().getW()<possibleFreeze.getPosition().getW() && dir[0]>0) || (player.getPosition().getW()>possibleFreeze.getPosition().getW() && dir[0]<0)){
-                                    possibleFreeze.freezePlayer();
-                                }
+
+
+                    while(whileCondition){
+                        if(isInBoundaries(dir, n, player)){
+                            if(BoardElement.playersTypesList.contains(gameRequest.getBoard()[player.getPosition().getW()+n*dir[0]][player.getPosition().getK()+n*dir[1]])){
+                                freezePlayers.add(SamuraiUtils.getPlayerByChar(gameRequest.getBoard()[player.getPosition().getW() + n*dir[0]][player.getPosition().getK() + n*dir[1]]));
+                                whileCondition = false;
+                                n = 0;
                             }
+                        }else{
+                            whileCondition = false;
+                            n = 0;
                         }
-                        if(dir[1]!=0){
-                            if(player.getPosition().getW() == possibleFreeze.getPosition().getW()){
-                                if((player.getPosition().getK()<possibleFreeze.getPosition().getK() && dir[1]>0) || (player.getPosition().getK()>possibleFreeze.getPosition().getK() && dir[1]<0)){
-                                    possibleFreeze.freezePlayer();
-                                }
-                            }
-                        }
+                       n++;
                     }
-
-
+                    whileCondition = true;
                 }
             }
         }
+        freezePlayers.stream().forEach(p->p.freezePlayer());
     }
 
-    public static void executeTakeAction(Map<String, String> collect) {
+    public static void executeTakeAction(Map<String, String> collect,GameRequest actualRequest) {
         int[] dir = new int[2];
+        int n = 1;
         String move;
         for (Player player : GameController.players) {
             move = collect.get(String.valueOf(player.getSign()));
@@ -151,26 +152,32 @@ public class GameManager {
                             break;
                         }
                     }
+                    if(isInBoundaries(dir, n, player)){
                     char c = GameController.previousGameRequest.getBoard()[player.getPosition().getW() + dir[0]][player.getPosition().getK() + dir[1]];
                     if(BoardElement.playersTypesList.contains(c)) {
-                        GameController.players.stream().filter(p -> p.getSign() == c).peek(p -> {
+                        GameController.players.stream().filter(p -> p.getSign() == c && p.isFlagsAccepted()).forEach(p -> {
                             p.decreaseAmountOfFlag();
                             player.increaseAmountOfFlag();
                         });
                     }else if(BoardElement.elementTypes[SamuraiConstants.FLAG_NUMBER]==c){
-                        player.increaseAmountOfFlag();
+                        if(!(actualRequest.getBoard()[player.getPosition().getW() + dir[0]][player.getPosition().getK() + dir[1]]==c)){
+                            player.increaseAmountOfFlag();
+                        }
+
+                    }
                     }
 
 
                 }
             }
-            dir=null;
-
+            GameController.players.forEach(p->p.acceptFlags());
         }
     }
 
+
+
     private static void updateFreezePlayer(){
-        GameController.players.stream().peek(p->p.defreezePlayer());
+        GameController.players.stream().forEach(p->p.defreezePlayer());
     }
 
 
