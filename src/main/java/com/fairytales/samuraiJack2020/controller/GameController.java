@@ -55,6 +55,10 @@ public class GameController {
 
 		if(requestBody.getStatus()==Status.end){
 			GameManager.clearGameHistory();
+			// test response
+			Move testMove = new Move(Move.Action.Nothing, Move.Direction.NoDirection);
+
+			return new PlayerMove(testMove);
 		}
 		Move myMove = samuraiJack.strategy();
 

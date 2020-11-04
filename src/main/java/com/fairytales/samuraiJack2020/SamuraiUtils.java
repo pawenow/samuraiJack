@@ -83,8 +83,8 @@ public class SamuraiUtils {
     }
 
     public static boolean isInBoundaries(int[] dir, int n, Player player) {
-        return player.getPosition().getK() + n * dir[1] >= 0 && GameController.previousGameRequest.getBoard()[1].length >= player.getPosition().getK() + n * dir[1]
-                && player.getPosition().getW() + n * dir[0] >= 0 && GameController.previousGameRequest.getBoard().length > player.getPosition().getW() + n * dir[0];
+        return (player.getPosition().getK() + n * dir[1]) >= 0 && GameController.previousGameRequest.getBoard()[1].length >= (player.getPosition().getK() + n * dir[1])
+                && (player.getPosition().getW() + n * dir[0]) >= 0 && GameController.previousGameRequest.getBoard().length >= (player.getPosition().getW() + n * dir[0]);
     }
 
     public static boolean isInBoundaries(int[] dir, int n, Position position, Board board) {
