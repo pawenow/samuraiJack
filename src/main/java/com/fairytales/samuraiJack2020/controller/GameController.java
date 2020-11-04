@@ -41,26 +41,22 @@ public class GameController {
 		if(requestBody.getStatus() == Status.test){
 			// test response
 			Move testMove = new Move(Move.Action.Fire, Move.Direction.UP);
+
+			return new PlayerMove(testMove);
 		}
 
 		if(requestBody.getStatus()==Status.start){
 			GameManager.initializePlayers(requestBody);
 		}
 
-		//if(requestBody.getStatus() == Status.progress){
-			GameManager.updatePlayerAfterLastTurn(requestBody);
-		//}
+
+		GameManager.updatePlayerAfterLastTurn(requestBody);
+
 
 		if(requestBody.getStatus()==Status.end){
 			GameManager.clearGameHistory();
-
-
-
 		}
 		Move myMove = samuraiJack.strategy();
-		if (myMove == null ) {	// just fake data so fake response
-			//
-		}
 
 		PlayerMove pMove = new PlayerMove(myMove);
 		GameManager.saveGameDetails(requestBody);
