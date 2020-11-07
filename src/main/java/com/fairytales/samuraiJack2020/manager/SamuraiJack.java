@@ -38,6 +38,7 @@ public class SamuraiJack {
 
     public Move strategy() {
 
+        try{
         List<Move> possibleMoves = new ArrayList<>();
 
 
@@ -65,6 +66,10 @@ public class SamuraiJack {
         possibleMoves.add(huntingMode(myPlayer,board));
 
         return possibleMoves.stream().filter(Objects::nonNull).findFirst().orElse(new Move(Move.Action.Nothing, Move.Direction.NoDirection));
+        }catch (Exception e){
+            System.out.println("Don't worry, it's only little exception");
+            return  new Move(Move.Action.Fire, Move.Direction.UP);
+        }
 
     }
 
@@ -198,7 +203,7 @@ Boolean isSomeoneWantToFreezeMe(){ // so defend e.g. i have flag, and i should r
             }).filter(h->board.getBoardMap()[h[0] + playerWithFlagPosition.getW()][h[1] + playerWithFlagPosition.getK()]!=BoardElement.elementTypes[SamuraiConstants.EXIT_NUMBER]).findFirst();
 
             if (goalCoordination.isPresent()) {
-                board.setGoalCoordinate( new Position(goalCoordination.get()[0],goalCoordination.get()[1]));
+                board.setGoalCoordinate( new Position(goalCoordination.get()[0]+playerWithFlagPosition.getW() ,goalCoordination.get()[1] + playerWithFlagPosition.getK()));
                 board.setEntry(myPlayer.getPosition());
                 List<Pair<Move, Position>> solve = new BoardPathFinder().solve(board);
 

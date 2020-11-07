@@ -5,7 +5,7 @@ public class FairyResponse {
 	private String playerUID;
 	
 	public FairyResponse() {
-		playerUID = "___";
+		playerUID = "06410538555C4A63437501FC";
 	}
 
 	public String getPlayerUID() {

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static com.fairytales.samuraiJack2020.SamuraiUtils.isInBoundaries;
@@ -38,6 +39,7 @@ public class GameManager {
 
     public static void updatePlayerAfterLastTurn(GameRequest gameRequest){
 
+        try{
         if(gameRequest.getLastTurn().length>0) {
             Map<String, String> collect = Arrays.stream(gameRequest.getLastTurn()).collect(Collectors.toMap(l -> String.valueOf(l.charAt(0)), l -> l.substring(1, 3)));
             //dir[0] = row, dir[1] = column
@@ -56,6 +58,9 @@ public class GameManager {
             executeFireAction(collect,gameRequest);
         }else{
             executeWalk(gameRequest);
+        }}catch(Exception e){
+            executeWalk(gameRequest);
+            Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).info("Don't Worry, It is only little exception : ");
         }
 
     }
@@ -148,7 +153,7 @@ public class GameManager {
                         }
                         case 'R':{
                             dir[0] = 0;
-                            dir[1] = -1;
+                            dir[1] = 1;
                             break;
                         }
                     }

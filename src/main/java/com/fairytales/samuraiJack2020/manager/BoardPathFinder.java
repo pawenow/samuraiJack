@@ -25,7 +25,7 @@ public class BoardPathFinder {
                 continue;
             }
 
-            if (board.isWall(cur.getW(), cur.getK())) {
+            if (board.isWall(cur.getW(), cur.getK()) || board.isOtherPlayer(cur.getW(), cur.getK())) {
                 board.setVisited(cur.getW(), cur.getK(), true);
                 continue;
             }

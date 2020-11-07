@@ -1,6 +1,7 @@
 package com.fairytales.samuraiJack2020.entity;
 
 import com.fairytales.samuraiJack2020.SamuraiConstants;
+import com.fairytales.samuraiJack2020.controller.GameController;
 
 import java.util.Arrays;
 
@@ -84,7 +85,7 @@ public class Board {
 
     public boolean isGoal(int x, int y) {
         if(boardMap[x][y] == getGoal()) return Boolean.TRUE;
-        if(getGoalCoordinate()!= null && x == getGoalCoordinate().getK() && y == getGoalCoordinate().getW()) return Boolean.TRUE;
+        if(getGoalCoordinate()!= null && y == getGoalCoordinate().getK() && x == getGoalCoordinate().getW()) return Boolean.TRUE;
         return false;
     }
 
@@ -115,5 +116,12 @@ public class Board {
 
     public void resetVisited() {
         visited = new boolean[boardMap.length][boardMap[0].length];
+    }
+
+    public boolean isOtherPlayer(int w, int k) {
+
+        if(BoardElement.playersTypesList.contains(boardMap[w][k]) && boardMap[w][k] != GameController.players.stream().filter(p->p.isMyPlayer()).findFirst().get().getSign() ) return Boolean.TRUE;
+        return false;
+
     }
 }
