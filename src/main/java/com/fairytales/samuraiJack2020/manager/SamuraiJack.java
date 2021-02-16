@@ -52,7 +52,7 @@ public class SamuraiJack {
         possibleMoves.add(checkIfPlayerIsAroundMeAndTakeFlagIfItHasOne(board,myPlayer));
 
 
-        possibleMoves.add(checkIfPlayerNextMoveGoAccrosMyLine(myPlayer.getPosition()));
+        //possibleMoves.add(checkIfPlayerNextMoveGoAccrosMyLine(myPlayer.getPosition()));
 
         // go to flag if exist :)
         possibleMoves.add(goTo(board, myPlayer, SamuraiConstants.FLAG_NUMBER));
@@ -78,7 +78,7 @@ public class SamuraiJack {
         List<Move.Action> actions = Collections.unmodifiableList(Arrays.asList(Move.Action.values()));
         List<Move.Direction> directions = Collections.unmodifiableList(Arrays.asList(Move.Direction.values()));
 
-        return  new Move(actions.get(random.nextInt(3)), directions.get(random.nextInt(4)));
+        return  new Move(actions.get((int) (Math.random()*3)), directions.get((int) (Math.random()*4)));
     }
 
     private Move goTo(Board board, Player myPlayer, Integer typeOfElement) {

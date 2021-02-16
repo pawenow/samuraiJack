@@ -41,6 +41,12 @@ public class Move {
 	public void setAction(Action action) {
 		this.action = action;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "Move{" +
+				"action=" + action.name() +
+				", direction=" + direction.name() +
+				'}';
+	}
 }
