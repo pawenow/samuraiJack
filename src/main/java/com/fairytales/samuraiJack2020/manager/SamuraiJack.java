@@ -7,7 +7,6 @@ import com.fairytales.samuraiJack2020.controller.GameController;
 import com.fairytales.samuraiJack2020.entity.*;
 import org.springframework.data.util.Pair;
 
-import java.lang.annotation.ElementType;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiFunction;
@@ -65,12 +64,21 @@ public class SamuraiJack {
         //hount player with flag and take it from it
         possibleMoves.add(huntingMode(myPlayer,board));
 
-        return possibleMoves.stream().filter(Objects::nonNull).findFirst().orElse(new Move(Move.Action.Nothing, Move.Direction.NoDirection));
+        return possibleMoves.stream().filter(Objects::nonNull).findFirst().orElse(getRandomMove());
         }catch (Exception e){
             System.out.println("Don't worry, it's only little exception");
-            return  new Move(Move.Action.Fire, Move.Direction.UP);
+            return getRandomMove();
         }
 
+    }
+
+    private Move getRandomMove() {
+        System.out.println("YEA ! It will be random move :D ");
+        Random random = new Random();
+        List<Move.Action> actions = Collections.unmodifiableList(Arrays.asList(Move.Action.values()));
+        List<Move.Direction> directions = Collections.unmodifiableList(Arrays.asList(Move.Direction.values()));
+
+        return  new Move(actions.get(random.nextInt(3)), directions.get(random.nextInt(4)));
     }
 
     private Move goTo(Board board, Player myPlayer, Integer typeOfElement) {

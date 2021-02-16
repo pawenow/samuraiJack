@@ -36,7 +36,6 @@ public class BoardPathFinder {
 
             for (int[] direction : DIRECTIONS) {
                 Position position = new Position(cur.getW() + direction[0], cur.getK() + direction[1], cur);
-                System.out.println(position.toString());
                 nextToVisit.add(position);
                 board.setVisited(cur.getW(), cur.getK(), true);
             }
