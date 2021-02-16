@@ -61,8 +61,8 @@ public class GameController {
 			return new PlayerMove(testMove);
 		}
 		Move myMove = samuraiJack.strategy();
-		System.out.println(myMove);
-		System.out.println(requestBody.getBoard());
+		System.out.println(myMove.toString());
+		System.out.println(requestBody.getBoard().toString());
 
 		PlayerMove pMove = new PlayerMove(myMove);
 		GameManager.saveGameDetails(requestBody);
